@@ -1,0 +1,105 @@
+#{extends 'main.html' /}
+#{set title:'Dashboard' /}
+
+#{menu id:"dashboard"/}
+
+
+  <section class="ui segment">
+    <h2 class="ui header">
+      ${member.firstname} ${member.lastname}'s  Station List
+    </h2>
+  </section>
+
+<table class="ui fixed table">
+  <tbody>
+  #{list items:member.stationlist, as:'station'}
+  </tbody>
+  <div class="ui horizontal stackable segments">
+
+    <div class="ui segment">
+      <p><b>${station.name}</b><br>Latitude: ${station.lat}</br><br>Longitude: ${station.lng}</br></p><i class="map marker icon"></i>
+    </div>
+    <div class="ui hidden section divider"></div>
+    <div class="ui segment">
+      #{if station.readings.size() > 0}
+      <p><b>Weather:</b><br>${station.readings.get(station.lastReading).codeDesc}</p>
+      #{/if}
+      <i class="orange cloud sun icon"></i>
+    </div>
+
+    <div class="ui segment">
+
+      <p><b>Temp</b>#{if station.readings.size() > 0}<br>${station.readings.get(station.readings.size()-1).temperature} °C<br>
+        ${station.readings.get(station.readings.size()-1).tempF} °F <br>
+        Max: ${station.getTempMax(station)}<br>
+        Min: ${station.getTempMin(station)}
+        #{/if}
+        #{else}
+        <br>no data</br>
+        #{/else}
+      </p>
+      <i class="temperature low icon"></i>
+      #{if ((station.readings.size()>2)&&((station.readings.get(station.readings.size()-1).temperature)<(station.readings.get(station.readings.size()-2).temperature))
+      &&((station.readings.get(station.readings.size()-2).temperature)<(station.readings.get(station.readings.size()-3).temperature)))}
+      <i class="arrow down icon"></i>
+      #{/if}
+      #{if ((station.readings.size()>2)&&((station.readings.get(station.readings.size()-1).temperature)>(station.readings.get(station.readings.size()-2).temperature))
+      &&((station.readings.get(station.readings.size()-2).temperature)>(station.readings.get(station.readings.size()-3).temperature)))}
+      <i class="arrow up icon"></i>
+      #{/if}
+    </div>
+    <div class="ui segment">
+      <div class="ui two column very relaxed grid">
+        <div class="column">
+          #{if station.readings.size() > 0}
+          <p><b>Wind</b><br>${station.readings.get(station.readings.size()-1).bftSpd} bft<br>
+            ${station.readings.get(station.readings.size()-1).winDir}<br>
+            Feels like<br>
+            ${station.readings.get(station.readings.size()-1).windChill}
+          </p>
+          #{/if}
+
+        </div>
+        <div class="column">
+          <i class="green wind icon"></i>
+          #{if ((station.readings.size()>2)&&((station.readings.get(station.readings.size()-1).windSpeed)<(station.readings.get(station.readings.size()-2).windSpeed))
+          &&((station.readings.get(station.readings.size()-2).windSpeed)<(station.readings.get(station.readings.size()-3).windSpeed)))}
+          <i class="arrow down icon"></i>
+          #{/if}
+          #{if ((station.readings.size()>2)&&((station.readings.get(station.readings.size()-1).windSpeed)>(station.readings.get(station.readings.size()-2).windSpeed))
+          &&((station.readings.get(station.readings.size()-2).windSpeed)>(station.readings.get(station.readings.size()-3).windSpeed)))}
+          <i class="arrow up icon"></i>
+          #{/if}
+        </div>
+      </div>
+    </div>
+    <div class="ui segment">
+      #{if station.readings.size() > 0}
+      <p><b>Pressure</b><br>${station.readings.get(station.readings.size()-1).pressure} hpa<br>
+        Max: ${station.getPrsMax(station)}<br>
+        Min: ${station.getPrsMin(station)}
+      </p>
+      #{/if}
+      <i class="large orange centos icon"></i>
+      #{if ((station.readings.size()>2)&&((station.readings.get(station.readings.size()-1).pressure)<(station.readings.get(station.readings.size()-2).pressure))
+      &&((station.readings.get(station.readings.size()-2).pressure)<(station.readings.get(station.readings.size()-3).pressure)))}
+      <i class="arrow down icon"></i>
+      #{/if}
+      #{if ((station.readings.size()>2)&&((station.readings.get(station.readings.size()-1).pressure)>(station.readings.get(station.readings.size()-2).pressure))
+      &&((station.readings.get(station.readings.size()-2).pressure)>(station.readings.get(station.readings.size()-3).pressure)))}
+      <i class="arrow up icon"></i>
+      #{/if}
+    </div>
+
+
+  </div>
+  <a href="/stations/${station.id}" class="ui icon button">
+    <i class="icon folder open"></i>
+  </a>
+  <a href="/dashboard/deletestations/${station.id}" class="ui icon button">
+    <i class="icon trash"></i>
+  </a>
+</table>
+#{/list}
+
+#{addstation/}
